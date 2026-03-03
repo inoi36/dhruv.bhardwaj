@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dhruv Bradwaj — Cybersecurity</title>
+  <script>
+    (function(){
+      var t=localStorage.getItem('dhruv-theme')||'dark';
+      document.documentElement.setAttribute('data-theme',t);
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    /* ══════════════════════════════════════
+       DARK THEME  (default)
+       Deep space navy + electric violet accent
+    ══════════════════════════════════════ */
+    :root,
+    html[data-theme="dark"]{
+      --bg:        #07080f;
+      --bg2:       #090a14;
+      --surface:   #0e0f1c;
+      --surface2:  #121424;
+      --border:    #1c1f3a;
+      --border2:   #272b50;
+      --text:      #e2e4f6;
+      --text2:     #9196c0;
+      --muted:     #454970;
+      --accent:    #7c6af7;
+      --accentRGB: 124,106,247;
+      --accent2:   #22d3ee;
+      --accent3:   #f472b6;
+      --scanline:  rgba(124,106,247,0.012);
+      --nav-blur:  rgba(7,8,15,0.88);
+      --grid-line: rgba(124,106,247,0.03);
+      --glow:      rgba(124,106,247,0.08);
+      --tag-color: #3a3d6a;
+      --cite-color:#1a1e38;
+      --divider:   #111428;
+      --footer:    #111428;
+    }
+
+    /* ══════════════════════════════════════
+       LIGHT THEME
+       Soft ivory + deep teal accent
+    ══════════════════════════════════════ */
+    html[data-theme="light"]{
+      --bg:        #f5f5f0;
+      --bg2:       #eeede8;
+      --surface:   #ffffff;
+      --surface2:  #f9f9f5;
+      --border:    #dddbd2;
+      --border2:   #c8c6bb;
+      --text:      #1a1a14;
+      --text2:     #45443a;
+      --muted:     #888778;
+      --accent:    #0d7a6e;
+      --accentRGB: 13,122,110;
+      --accent2:   #7c3aed;
+      --accent3:   #dc2626;
+      --scanline:  transparent;
+      --nav-blur:  rgba(245,245,240,0.93);
+      --grid-line: rgba(13,122,110,0.04);
+      --glow:      rgba(13,122,110,0.06);
+      --tag-color: #4a6a64;
+      --cite-color:#b0b8b4;
+      --divider:   #ccc9be;
+      --footer:    #aaa89e;
+    }
+
+    /* ══ BASE ══ */
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:'DM Sans',sans-serif;
+      font-weight:300;
+      line-height:1.7;
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background 0.4s ease, color 0.4s ease;
+    }
+
+    /* scanlines — dark only */
+    body::before{
+      content:'';
+      position:fixed;inset:0;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline) 2px,var(--scanline) 4px);
+      pointer-events:none;
+      z-index:1;
+    }
+
+    a{color:inherit;text-decoration:none}
+    .container{max-width:820px;margin:0 auto;padding:0 28px}
+    section{padding:90px 0;border-bottom:1px solid var(--border)}
+
+    /* ══ NAV ══ */
+    nav{
+      position:fixed;top:0;left:0;right:0;
+      z-index:9999;
+      padding:16px 0;
+      border-bottom:1px solid transparent;
+      transition:background 0.3s,border-color 0.3s,backdrop-filter 0.3s;
+    }
+    nav.scrolled{
+      background:var(--nav-blur);
+      border-color:var(--border);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+    }
+    .nav-inner{
+      max-width:820px;margin:0 auto;padding:0 28px;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .nav-logo{
+      font-family:'Space Mono',monospace;
+      font-size:0.75rem;color:var(--accent);letter-spacing:0.1em;
+    }
+    .nav-links{display:flex;gap:24px;align-items:center}
+    .nav-links a{
+      font-family:'Space Mono',monospace;
+      font-size:0.62rem;color:var(--muted);
+      letter-spacing:0.12em;text-transform:uppercase;
+      transition:color 0.2s;
+    }
+    .nav-links a:hover{color:var(--accent)}
+
+    /* ── THEME TOGGLE ── */
+    #theme-toggle{
+      width:36px;height:36px;
+      border-radius:50%;
+      border:1px solid var(--border);
+      background:var(--surface);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:border-color 0.2s, background 0.2s, transform 0.35s;
+      outline:none;
+      flex-shrink:0;
+      position:relative;
+      overflow:hidden;
+      z-index:10000;
+    }
+    #theme-toggle:hover{
+      border-color:var(--accent);
+      background:rgba(var(--accentRGB),0.1);
+      transform:rotate(22deg);
+    }
+    /* sun */
+    #theme-toggle .t-sun{
+      position:absolute;
+      width:16px;height:16px;
+      fill:none;
+      stroke:var(--accent);
+      stroke-width:2;
+      stroke-linecap:round;
+      transition:opacity 0.3s, transform 0.4s;
+      opacity:0;
+      transform:scale(0.5) rotate(90deg);
+    }
+    /* moon */
+    #theme-toggle .t-moon{
+      position:absolute;
+      width:15px;height:15px;
+      fill:var(--accent);
+      transition:opacity 0.3s, transform 0.4s;
+      opacity:1;
+      transform:scale(1) rotate(0deg);
+    }
+    /* light mode: show sun, hide moon */
+    html[data-theme="light"] #theme-toggle .t-sun{
+      opacity:1;
+      transform:scale(1) rotate(0deg);
+    }
+    html[data-theme="light"] #theme-toggle .t-moon{
+      opacity:0;
+      transform:scale(0.5) rotate(-90deg);
+    }
+
+    /* ══ HERO ══ */
+    #hero{padding:130px 0 90px;position:relative;overflow:hidden}
+    .hero-grid{
+      position:absolute;inset:0;
+      background-image:
+        linear-gradient(var(--grid-line) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);
+      -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%);
+    }
+    .hero-glow-blob{
+      position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+      width:700px;height:500px;
+      background:radial-gradient(ellipse,var(--glow) 0%,transparent 70%);
+      pointer-events:none;
+      transition:background 0.4s;
+    }
+
+    .hero-tag{font-family:'Space Mono',monospace;font-size:0.67rem;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 0.6s ease forwards 0.1s}
+    .hero-greeting{font-family:'Space Mono',monospace;font-size:clamp(0.78rem,1.8vw,0.92rem);color:var(--muted);margin-bottom:14px;min-height:1.6em;opacity:0;animation:fadeUp 0.6s ease forwards 0.2s}
+    .hero-name{font-family:'Noto Serif JP',serif;font-size:clamp(3rem,9vw,6rem);font-weight:700;line-height:1.02;letter-spacing:-0.03em;margin-bottom:12px;opacity:0;animation:fadeUp 0.7s ease forwards 0.3s}
+    .hero-name .n1{color:var(--text)}
+    .hero-name .n2{color:var(--accent)}
+    .hero-role{font-family:'Space Mono',monospace;font-size:clamp(0.78rem,1.8vw,1rem);color:var(--accent2);margin-bottom:32px;opacity:0;animation:fadeUp 0.7s ease forwards 0.4s}
+    .hero-role span{opacity:0.35;margin:0 8px}
+
+    .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;opacity:0;animation:fadeUp 0.7s ease forwards 0.48s}
+    .hbadge{
+      font-family:'Space Mono',monospace;font-size:0.6rem;
+      padding:4px 12px;border-radius:100px;border:1px solid;
+      letter-spacing:0.07em;transition:all 0.2s;
+    }
+    .hb-v{border-color:rgba(var(--accentRGB),0.35);color:rgba(var(--accentRGB),0.85);background:rgba(var(--accentRGB),0.06)}
+    .hb-v:hover{border-color:var(--accent);color:var(--accent);background:rgba(var(--accentRGB),0.12)}
+    .hb-c{border-color:rgba(34,211,238,0.3);color:rgba(34,211,238,0.8);background:rgba(34,211,238,0.05)}
+    .hb-c:hover{border-color:var(--accent2);color:var(--accent2)}
+    .hb-p{border-color:rgba(244,114,182,0.3);color:rgba(244,114,182,0.8);background:rgba(244,114,182,0.05)}
+    .hb-p:hover{border-color:var(--accent3);color:var(--accent3)}
+
+    .hero-meta{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);display:flex;gap:22px;flex-wrap:wrap;margin-bottom:48px;opacity:0;animation:fadeUp 0.7s ease forwards 0.55s}
+    .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite;vertical-align:middle;margin-right:6px}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.7)}}
+
+    .hero-bio{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-left:3px solid var(--accent);
+      border-radius:6px;
+      padding:22px 26px;
+      font-size:0.88rem;color:var(--text2);line-height:1.85;
+      margin-bottom:44px;
+      opacity:0;animation:fadeUp 0.8s ease forwards 0.62s;
+      transition:background 0.4s, border-color 0.4s;
+    }
+    .hero-bio-prefix{font-family:'Space Mono',monospace;color:var(--accent);opacity:0.45;font-size:0.72rem;margin-right:4px}
+
+    .hero-quotes{border-left:2px solid var(--border);padding-left:24px;display:flex;flex-direction:column;gap:20px;opacity:0;animation:fadeUp 0.8s ease forwards 0.72s}
+    .hquote{font-style:italic;color:var(--muted);font-size:0.85rem;line-height:1.65;transition:color 0.4s}
+    .hquote cite{display:block;font-style:normal;font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--cite-color);margin-top:4px;letter-spacing:0.05em;transition:color 0.4s}
+
+    /* ══ MARQUEE STRIP ══ */
+    .marquee-wrap{
+      overflow:hidden;height:42px;
+      display:flex;align-items:center;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      transition:background 0.4s;
+    }
+    .mtrack{display:flex;animation:marquee 22s linear infinite;white-space:nowrap}
+    .mtrack span{
+      font-family:'Space Mono',monospace;font-size:0.62rem;
+      color:var(--muted);padding:0 18px;
+      border-right:1px solid var(--border);
+      letter-spacing:0.1em;opacity:0.5;
+      transition:color 0.4s;
+    }
+    .mtrack span.hi{color:var(--accent);opacity:0.75}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    /* ══ STATS ══ */
+    #stats{padding:48px 0;border-bottom:1px solid var(--border)}
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+    }
+    @media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:380px){.stats-grid{grid-template-columns:1fr}}
+    .stat-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:28px 20px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      transition:border-color 0.25s,background 0.25s,transform 0.25s;
+    }
+    .stat-card::before{
+      content:'';
+      position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      opacity:0;
+      transition:opacity 0.3s;
+    }
+    .stat-card:hover{border-color:var(--border2);background:var(--surface2);transform:translateY(-4px)}
+    .stat-card:hover::before{opacity:1}
+    .stat-icon{font-size:1.3rem;margin-bottom:10px;display:block}
+    .stat-num{
+      font-family:'Noto Serif JP',serif;
+      font-size:2.6rem;font-weight:700;
+      color:var(--accent);line-height:1;margin-bottom:8px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .stat-lbl{
+      font-family:'Space Mono',monospace;
+      font-size:0.58rem;color:var(--muted);
+      letter-spacing:0.12em;text-transform:uppercase;
+      line-height:1.5;
+    }
+
+    /* ══ SECTION HEADER ══ */
+    .slabel{font-family:'Space Mono',monospace;font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;opacity:0.65}
+    .stitle{font-family:'Noto Serif JP',serif;font-size:clamp(1.5rem,4vw,2.3rem);font-weight:300;margin-bottom:8px}
+    .ssub{color:var(--muted);font-size:0.82rem;margin-bottom:50px;transition:color 0.4s}
+
+    /* ══ SPEC CARDS ══ */
+    .spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px}
+    .spec-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:5px;padding:28px;
+      transition:border-color 0.25s,background 0.25s;
+      cursor:default;position:relative;overflow:hidden;
+    }
+    .spec-card:hover{border-color:var(--border2);background:var(--surface2)}
+    .spec-icon{font-size:1.7rem;margin-bottom:14px}
+    .spec-name{font-family:'Space Mono',monospace;font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:8px}
+    .spec-desc{font-size:0.8rem;color:var(--muted);line-height:1.65;transition:color 0.4s}
+    .spec-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+    .stag{
+      font-family:'Space Mono',monospace;font-size:0.57rem;
+      background:var(--bg2);border:1px solid var(--border);
+      color:var(--tag-color);padding:2px 8px;border-radius:3px;
+      letter-spacing:0.05em;transition:color 0.4s,background 0.4s,border-color 0.4s;
+    }
+
+    /* ══ PROJECT CARDS ══ */
+    .proj-grid{display:flex;flex-direction:column;gap:3px}
+    .proj-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:5px;padding:26px 30px;
+      transition:border-color 0.25s,background 0.25s;
+      position:relative;overflow:hidden;
+    }
+    .proj-card::before{
+      content:'';position:absolute;top:0;left:0;
+      width:2px;height:100%;
+      background:linear-gradient(180deg,var(--accent),var(--accent2));
+      transform:scaleY(0);transform-origin:top;
+      transition:transform 0.3s ease;
+    }
+    .proj-card:hover{border-color:var(--border2);background:var(--surface2)}
+    .proj-card:hover::before{transform:scaleY(1)}
+    .proj-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+    .proj-name{font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--text)}
+    .pbadge{font-family:'Space Mono',monospace;font-size:0.57rem;padding:3px 10px;border-radius:100px;border:1px solid;letter-spacing:0.07em}
+    .pb-prog{border-color:#f59e0b;color:#f59e0b}
+    .pb-done{border-color:var(--accent);color:var(--accent)}
+    .pb-merge{border-color:var(--accent2);color:var(--accent2)}
+    .proj-desc{font-size:0.81rem;color:var(--muted);line-height:1.7;margin-bottom:16px;transition:color 0.4s}
+    .proj-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:15px}
+    .ptag{
+      font-family:'Space Mono',monospace;font-size:0.57rem;
+      background:var(--bg);border:1px solid var(--border);
+      color:var(--tag-color);padding:2px 8px;border-radius:3px;
+      letter-spacing:0.05em;transition:all 0.4s;
+    }
+    .proj-links{display:flex;gap:14px}
+    .plink{
+      font-family:'Space Mono',monospace;font-size:0.66rem;
+      color:var(--muted);border-bottom:1px solid transparent;
+      transition:color 0.2s,border-color 0.2s;
+    }
+    .plink:hover{color:var(--accent);border-color:var(--accent)}
+
+    /* ══ PLATFORM CARDS ══ */
+    .plat-grid{display:flex;flex-direction:column;gap:3px}
+    .plat-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:5px;padding:20px 26px;
+      display:flex;align-items:center;gap:18px;
+      transition:border-color 0.25s,background 0.25s;
+    }
+    .plat-card:hover{border-color:var(--border2);background:var(--surface2)}
+    .plat-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:color 0.3s}
+    .plat-card:hover .plat-icon{color:var(--accent)}
+    .plat-icon svg{width:26px;height:26px;fill:currentColor}
+    .plat-info{flex:1}
+    .plat-name{font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;color:var(--text);margin-bottom:2px}
+    .plat-handle{font-family:'Space Mono',monospace;font-size:0.66rem;color:var(--accent);margin-bottom:4px}
+    .plat-desc{font-size:0.77rem;color:var(--muted);transition:color 0.4s}
+    .plat-badge{
+      font-family:'Space Mono',monospace;font-size:0.58rem;
+      padding:4px 12px;border-radius:100px;
+      border:1px solid rgba(var(--accentRGB),0.3);
+      color:rgba(var(--accentRGB),0.7);
+      background:rgba(var(--accentRGB),0.05);
+      white-space:nowrap;
+    }
+
+    /* ══ TECH STACK ══ */
+    .tech-wrap{overflow:hidden;display:flex;flex-direction:column;gap:10px;padding-bottom:4px}
+    .trow{display:flex;width:max-content}
+    .trow.r1{animation:marquee 28s linear infinite}
+    .trow.r2{animation:marquee 22s linear infinite reverse}
+    .trow.r3{animation:marquee 36s linear infinite}
+    .tpill{
+      font-family:'Space Mono',monospace;font-size:0.63rem;
+      padding:6px 16px;border:1px solid var(--border);border-radius:100px;
+      color:var(--tag-color);margin-right:8px;white-space:nowrap;
+      letter-spacing:0.05em;
+      transition:color 0.2s,border-color 0.2s;
+    }
+    .tpill:hover{color:var(--accent);border-color:var(--accent)}
+
+    /* ══ GAMING ══ */
+    .game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:28px}
+    .game-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:5px;padding:24px 18px;text-align:center;
+      transition:border-color 0.25s,background 0.25s;
+    }
+    .game-card:hover{border-color:var(--border2);background:var(--surface2)}
+    .gicon{width:52px;height:52px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+    .gicon svg{width:42px;height:42px}
+    .gname{font-family:'Space Mono',monospace;font-size:0.76rem;font-weight:700;color:var(--text);margin-bottom:4px}
+    .gdetail{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.06em}
+    .grole{display:inline-block;margin-top:8px;font-family:'Space Mono',monospace;font-size:0.56rem;padding:2px 10px;border-radius:100px;border:1px solid var(--border);color:var(--muted)}
+    .ghours{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      margin-top:12px;padding-top:12px;
+      border-top:1px solid var(--border);
+    }
+    .ghours-num{font-family:'Space Mono',monospace;font-size:0.82rem;font-weight:700;color:var(--accent)}
+    .ghours-lbl{font-family:'Space Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+    .gamer-row{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:5px;padding:16px 22px;
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+      transition:background 0.4s;
+    }
+    .glabel{font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+    .gval{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--accent);font-weight:700}
+    .gsep{color:var(--border);font-family:'Space Mono',monospace}
+
+    /* ══ CONTACT ══ */
+    .cdivider{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--divider);letter-spacing:0.12em;margin-bottom:32px;overflow:hidden;white-space:nowrap;transition:color 0.4s}
+    .email-btn{
+      display:inline-flex;align-items:center;gap:12px;
+      font-family:'Space Mono',monospace;font-size:0.78rem;
+      background:var(--surface);border:1px solid var(--border);
+      padding:13px 22px;border-radius:5px;cursor:pointer;
+      transition:border-color 0.2s,background 0.25s;
+      margin-bottom:40px;
+    }
+    .email-btn:hover{border-color:var(--accent);background:var(--surface2)}
+    .email-btn .enc{color:var(--muted)}
+    .email-btn .dec{color:var(--accent);display:none}
+    .email-btn.shown .enc{display:none}
+    .email-btn.shown .dec{display:inline}
+
+    .social-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+    .slink{
+      font-family:'Space Mono',monospace;font-size:0.66rem;
+      border:1px solid var(--border);padding:9px 16px;border-radius:4px;
+      color:var(--muted);letter-spacing:0.07em;
+      display:inline-flex;align-items:center;gap:7px;
+      transition:color 0.2s,border-color 0.2s,background 0.2s;
+    }
+    .slink:hover{color:var(--accent);border-color:var(--accent);background:rgba(var(--accentRGB),0.06)}
+    .slink svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
+
+    /* ══ FOOTER ══ */
+    footer{padding:36px 0;text-align:center;border-top:1px solid var(--border)}
+    .ftxt{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--footer);letter-spacing:0.12em;transition:color 0.4s}
+    .facc{color:var(--accent);opacity:0.4}
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .cursor{display:inline-block;width:8px;height:0.95em;background:var(--accent);vertical-align:text-bottom;animation:blink 1s step-end infinite;margin-left:2px}
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity 0.55s ease,transform 0.55s ease}
+    .reveal.visible{opacity:1;transform:none}
+
+    @media(max-width:640px){
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .spec-grid{grid-template-columns:1fr}
+      .game-grid{grid-template-columns:1fr}
+      nav .nav-links a:not(:last-child){display:none}
+    }
+
+    /* ══ BLOG SECTION ══ */
+    #blog{padding:90px 0;border-bottom:1px solid var(--border)}
+    .blog-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    @media(max-width:600px){.blog-grid{grid-template-columns:1fr}}
+    .blog-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:28px;
+      transition:border-color 0.25s,background 0.25s,transform 0.25s;
+      position:relative;overflow:hidden;
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .blog-card::after{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      transform:scaleX(0);transform-origin:left;
+      transition:transform 0.35s ease;
+    }
+    .blog-card:hover{border-color:var(--border2);background:var(--surface2);transform:translateY(-3px)}
+    .blog-card:hover::after{transform:scaleX(1)}
+    .blog-card-tags{display:flex;flex-wrap:wrap;gap:6px}
+    .bc-tag{font-family:'Space Mono',monospace;font-size:0.56rem;padding:3px 9px;border-radius:100px;border:1px solid rgba(var(--accentRGB),0.3);color:rgba(var(--accentRGB),0.8);background:rgba(var(--accentRGB),0.05);letter-spacing:0.07em}
+    .bc-tag.t2{border-color:rgba(34,211,238,0.3);color:rgba(34,211,238,0.75);background:rgba(34,211,238,0.05)}
+    .bc-tag.t3{border-color:rgba(244,114,182,0.3);color:rgba(244,114,182,0.75);background:rgba(244,114,182,0.05)}
+    .blog-card-title{font-family:'Noto Serif JP',serif;font-size:1.05rem;font-weight:400;color:var(--text);line-height:1.4}
+    .blog-card-excerpt{font-size:0.8rem;color:var(--muted);line-height:1.7;flex:1;transition:color 0.4s}
+    .blog-card-meta{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+    .bc-date{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.08em}
+    .bc-read{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.08em}
+    .bc-link{font-family:'Space Mono',monospace;font-size:0.66rem;color:var(--accent);letter-spacing:0.06em;display:inline-flex;align-items:center;gap:4px;border-bottom:1px solid transparent;transition:border-color 0.2s}
+    .bc-link:hover{border-color:var(--accent)}
+    .blog-card-featured{grid-column:1/-1}
+    .blog-card-featured .blog-card-title{font-size:1.3rem}
+    .blog-card-featured .blog-card-excerpt{font-size:0.85rem}
+    .blog-coming{
+      border:1px dashed var(--border);border-radius:10px;
+      padding:28px;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:8px;text-align:center;
+      min-height:140px;
+    }
+    .blog-coming-icon{font-size:1.5rem;opacity:0.4}
+    .blog-coming-text{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.1em}
+
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <span class="nav-logo">dhruv@kali:~$</span>
+    <div class="nav-links">
+      <a href="#hero">Home</a>
+      <a href="#specs">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#gaming">Gaming</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+      <!-- THEME TOGGLE -->
+      <button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle dark/light mode">
+        <!-- Moon (shown in dark) -->
+        <svg class="t-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <!-- Sun (shown in light) -->
+        <svg class="t-sun" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-blob"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <p class="hero-tag">// cybersecurity researcher</p>
+    <p class="hero-greeting" id="typedEl"><span class="cursor"></span></p>
+    <h1 class="hero-name"><span class="n1">Dhruv </span><span class="n2">Bradwaj</span></h1>
+    <p class="hero-role">Penetration Tester<span>/</span>Bug Hunter<span>/</span>Malware Analyst</p>
+
+    <div class="hero-badges">
+      <span class="hbadge hb-v">⚡ Penetration Testing</span>
+      <span class="hbadge hb-p">🐛 Bug Bounty</span>
+      <span class="hbadge hb-c">🦠 Malware Analysis</span>
+      <span class="hbadge hb-v">🌐 Web App Security</span>
+      <span class="hbadge hb-c">TryHackMe Active</span>
+    </div>
+
+    <div class="hero-meta">
+      <span>21 · Gujarat, India</span>
+      <span><span class="sdot"></span>Available for work</span>
+      <span>0–1 yr experience</span>
+    </div>
+
+    <div class="hero-bio">
+      <span class="hero-bio-prefix">&gt;&nbsp;</span>I wasn't born into opportunity — I built it. From a quiet corner of Gujarat, far from tech headlines and elite campuses, I chose to hunt knowledge instead of waiting for it. In cybersecurity, no one hands you answers. You break systems to understand them. You learn in the dark. And you build your own light.
+    </div>
+
+    <div class="hero-quotes">
+      <blockquote class="hquote">"The quieter you become, the more you are able to hear."<cite>— Kali Linux</cite></blockquote>
+      <blockquote class="hquote">"Hackers are the immune system of the internet."<cite>— Unknown</cite></blockquote>
+      <blockquote class="hquote">"Security is not a product, but a process."<cite>— Bruce Schneier</cite></blockquote>
+      <blockquote class="hquote">"The only truly secure system is one that is powered off."<cite>— Gene Spafford</cite></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap"><div class="mtrack" id="mtrack"></div></div>
+
+<!-- STATS -->
+<section id="stats" style="padding:0">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <span class="stat-icon">🎯</span>
+        <div class="stat-num" id="c1">0</div>
+        <div class="stat-lbl">THM Rooms<br>Completed</div>
+      </div>
+      <div class="stat-card reveal">
+        <span class="stat-icon">🔍</span>
+        <div class="stat-num" id="c2">0</div>
+        <div class="stat-lbl">CVEs<br>Studied</div>
+      </div>
+      <div class="stat-card reveal">
+        <span class="stat-icon">⚙️</span>
+        <div class="stat-num" id="c3">0</div>
+        <div class="stat-lbl">Projects<br>Built</div>
+      </div>
+      <div class="stat-card reveal">
+        <span class="stat-icon">📅</span>
+        <div class="stat-num" id="c4">0</div>
+        <div class="stat-lbl">Months<br>Learning</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALIZATIONS -->
+<section id="specs">
+  <div class="container">
+    <p class="slabel">// expertise</p>
+    <h2 class="stitle">Specializations</h2>
+    <p class="ssub">Areas I actively research and practice</p>
+    <div class="spec-grid" id="specGrid"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <p class="slabel">// work</p>
+    <h2 class="stitle">Projects</h2>
+    <p class="ssub">Security research &amp; personal builds — in progress</p>
+    <div class="proj-grid" id="projGrid"></div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="container">
+    <p class="slabel">// profiles</p>
+    <h2 class="stitle">Platforms &amp; Achievements</h2>
+    <p class="ssub">Where I practice, compete and learn</p>
+    <div class="plat-grid" id="platGrid"></div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="stack">
+  <div class="container">
+    <p class="slabel">// arsenal</p>
+    <h2 class="stitle">Tools &amp; Stack</h2>
+    <p class="ssub" style="margin-bottom:28px">My cybersecurity toolkit</p>
+  </div>
+  <div class="tech-wrap" id="techWrap"></div>
+</section>
+
+<!-- GAMING -->
+<section id="gaming">
+  <div class="container">
+    <p class="slabel">// downtime</p>
+    <h2 class="stitle">Gaming</h2>
+    <p class="ssub">When I'm not hunting vulnerabilities, I'm hunting wins.</p>
+    <div class="game-grid">
+      <div class="game-card reveal">
+        <div class="gicon"><svg viewBox="0 0 24 24" fill="#FF4655"><path d="M0 7.5L7.5 21h3.75L3.75 7.5H0zm12 0l7.5 13.5H24L12 0 0 21h3.75L12 7.5z"/></svg></div>
+        <div class="gname">Valorant</div>
+        <div class="gdetail">FPS · Tactical Shooter</div>
+        <span class="grole">Main: Duelist</span>
+        <div class="ghours">
+          <span class="ghours-num" data-target="500">0</span>
+          <span class="ghours-lbl">hrs played</span>
+        </div>
+      </div>
+      <div class="game-card reveal">
+        <div class="gicon"><svg viewBox="0 0 24 24" fill="#F7941D"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.5 8.25H13.5v7.5h-3v-7.5H7.5V6h9v2.25z"/></svg></div>
+        <div class="gname">GTA V</div>
+        <div class="gdetail">Open World · Online</div>
+        <span class="grole">Online Grinder</span>
+        <div class="ghours">
+          <span class="ghours-num" data-target="300">0</span>
+          <span class="ghours-lbl">hrs played</span>
+        </div>
+      </div>
+      <div class="game-card reveal">
+        <div class="gicon"><svg viewBox="0 0 24 24" fill="#62B47A"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v4h4V6H6zm8 0v4h4V6h-4zM6 14v4h4v-4H6zm8 0v4h4v-4h-4z"/></svg></div>
+        <div class="gname">Minecraft</div>
+        <div class="gdetail">Sandbox · Survival</div>
+        <span class="grole">Builder / Redstone</span>
+        <div class="ghours">
+          <span class="ghours-num" data-target="800">0</span>
+          <span class="ghours-lbl">hrs played</span>
+        </div>
+      </div>
+    </div>
+    <div class="gamer-row reveal">
+      <span class="glabel">Gamer ID</span><span class="gsep">|</span>
+      <span class="gval">inoi36</span><span class="gsep">·</span>
+      <span class="glabel">GitHub</span><span class="gsep">|</span>
+      <span class="gval" style="color:var(--accent2)">inoi36</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="container">
+    <p class="slabel">// writeups</p>
+    <h2 class="stitle">Blog &amp; Writeups</h2>
+    <p class="ssub">Security research, CTF solutions &amp; learning notes</p>
+    <div class="blog-grid">
+      <div class="blog-card blog-card-featured reveal">
+        <div class="blog-card-tags">
+          <span class="bc-tag">Malware Analysis</span>
+          <span class="bc-tag t2">Lab Setup</span>
+          <span class="bc-tag t3">Beginner Friendly</span>
+          <span class="bc-tag">Deep Dive</span>
+        </div>
+        <div class="blog-card-title">Malware Analysis in a Safe Environment — Complete Guide</div>
+        <div class="blog-card-excerpt">A complete practical guide to setting up an isolated malware lab, understanding static &amp; dynamic analysis methodologies, using tools like Ghidra, Wireshark, and ProcMon, and dissecting malicious software without putting your system at risk.</div>
+        <div class="blog-card-meta">
+          <span class="bc-date">&#x1F4C5; 2025</span>
+          <span class="bc-read">&#x23F1; ~18 min read</span>
+          <a href="blog-malware.html" class="bc-link">Read Article &#x2192;</a>
+        </div>
+      </div>
+      <div class="blog-coming reveal">
+        <div class="blog-coming-icon">&#x270D;&#xFE0F;</div>
+        <div class="blog-coming-text">Next Writeup<br>Coming Soon...</div>
+      </div>
+      <div class="blog-coming reveal">
+        <div class="blog-coming-icon">&#x1F513;</div>
+        <div class="blog-coming-text">CTF Writeup<br>In Progress...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <p class="slabel">// contact</p>
+    <h2 class="stitle">Get in Touch</h2>
+    <div class="cdivider">•▪▫○◉◆◇•▪▫○◉◆◇••▪▫○◉◆▪◇•▪▫○◉◆◇•▪▫○◉◆◇••▪▫○◉◆▪◇•▪▫○◉◆◇•▪▫○◉◆◇</div>
+
+    <div class="email-btn" id="emailBtn" onclick="revealEmail()">
+      <span>📬</span>
+      <span class="enc">Click to decode email</span>
+      <span class="dec" id="emailDec"></span>
+    </div>
+
+    <p class="slabel" style="margin-bottom:16px">// social</p>
+    <div class="social-row">
+      <a href="https://github.com/inoi36" target="_blank" class="slink">
+        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        GitHub ↗
+      </a>
+      <a href="https://x.com/Dhruv_vyas3" target="_blank" class="slink">
+        <svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+        Twitter / X ↗
+      </a>
+      <a href="https://tryhackme.com/p/inoi" target="_blank" class="slink">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l6 2.67V11c0 3.88-2.63 7.52-6 8.93-3.37-1.41-6-5.05-6-8.93V7.67L12 5z"/></svg>
+        TryHackMe ↗
+      </a>
+      <a href="/cdn-cgi/l/email-protection#baded2c8cfccceccc3dbc9888a8a8efaddd7dbd3d694d9d5d7" class="slink">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email ↗
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p class="ftxt">
+      <span class="facc">root@dhruv</span>:~$ echo <span class="facc">"</span>BUILT WITH ♥ FROM GUJARAT — DHRUV BRADWAJ © 2025<span class="facc">"</span>
+    </p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ══ THEME TOGGLE ══ */
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('dhruv-theme', next);
+}
+
+/* ══ NAV SCROLL ══ */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ══ TYPEWRITER ══ */
+const phrases = ['> whoami', 'こんにちわ, I\'m Dhruv', 'cat /etc/shadow | grep dhruv', 'nmap -sV target.local'];
+let pi=0, ci=0, del=false;
+const typEl = document.getElementById('typedEl');
+function type(){
+  const p = phrases[pi];
+  if(!del){ ci++; typEl.innerHTML = p.slice(0,ci)+'<span class="cursor"></span>'; if(ci===p.length){del=true;setTimeout(type,1800);return} }
+  else { ci--; typEl.innerHTML = p.slice(0,ci)+'<span class="cursor"></span>'; if(ci===0){del=false;pi=(pi+1)%phrases.length} }
+  setTimeout(type, del?42:82);
+}
+setTimeout(type, 900);
+
+/* ══ MARQUEE ══ */
+const mwords = ['PENETRATION TESTING','BUG BOUNTY','MALWARE ANALYSIS','WEB APP SECURITY','OSINT','TRYHACKME','NETWORK SECURITY','ETHICAL HACKING','CTF'];
+const mdbl = [...mwords,...mwords,...mwords,...mwords];
+document.getElementById('mtrack').innerHTML = mdbl.map((w,i)=>`<span${i%3===1?' class="hi"':''}>${w}</span>`).join('');
+
+/* ══ COUNTER ══ */
+function animCount(id, target){
+  const el = document.getElementById(id);
+  let n=0; const step=Math.ceil(target/40);
+  const t=setInterval(()=>{ n=Math.min(n+step,target); el.textContent=n; if(n>=target)clearInterval(t); },40);
+}
+
+/* ══ SPEC CARDS ══ */
+const specs=[
+  {icon:'🔓',name:'Penetration Testing',desc:'Simulating real-world attacks to identify and exploit vulnerabilities in systems, networks, and applications before malicious actors do.',tags:['Metasploit','Nmap','Burp Suite','Netcat','Hydra']},
+  {icon:'🐛',name:'Bug Bounty Hunting',desc:'Actively hunting for security vulnerabilities in web applications and reporting them responsibly to programs for recognition and rewards.',tags:['OWASP Top 10','XSS','SQLi','IDOR','SSRF']},
+  {icon:'🦠',name:'Malware Analysis',desc:'Studying malicious software to understand behavior, reverse engineer payloads, and develop detection and defense strategies.',tags:['Ghidra','IDA Pro','VirusTotal','Sandbox','YARA']},
+  {icon:'🌐',name:'Web App Security',desc:'Deep-diving into web vulnerabilities — from authentication bypasses to injection flaws — across modern web stacks and APIs.',tags:['HTTP','REST APIs','JWT','OAuth','CORS']},
+];
+document.getElementById('specGrid').innerHTML = specs.map(s=>`
+  <div class="spec-card reveal">
+    <div class="spec-icon">${s.icon}</div>
+    <div class="spec-name">${s.name}</div>
+    <div class="spec-desc">${s.desc}</div>
+    <div class="spec-tags">${s.tags.map(t=>`<span class="stag">${t}</span>`).join('')}</div>
+  </div>`).join('');
+
+/* ══ PROJECTS ══ */
+const projs=[
+  {name:'Security Research / Project',status:'In Progress',badge:'pb-prog',desc:'Currently building — replace this with your real project name and description. What vulnerability class are you researching? What tool are you building?',tags:['Python','Kali Linux','Burp Suite','Bash','Linux'],links:[{l:'GitHub',u:'https://github.com/inoi36'},{l:'Writeup',u:'#'}]},
+  {name:'CTF / TryHackMe Writeup',status:'In Progress',badge:'pb-prog',desc:'Working through TryHackMe rooms and documenting methodologies. Replace with specific room names, techniques, and key learnings.',tags:['Web Exploitation','Privilege Escalation','Linux','Networking','Cryptography'],links:[{l:'TryHackMe',u:'https://tryhackme.com/p/inoi'},{l:'Notes',u:'#'}]},
+  {name:'Malware Sample Analysis',status:'In Progress',badge:'pb-prog',desc:'Analyzing malware samples in a sandboxed environment to understand behavior, identify IOCs, and document findings.',tags:['Ghidra','VirusTotal','Python','Sandbox','YARA'],links:[{l:'GitHub',u:'https://github.com/inoi36'},{l:'Report',u:'#'}]},
+  {name:'Web App Vulnerability Lab',status:'In Progress',badge:'pb-prog',desc:'Setting up and exploiting intentionally vulnerable web apps (DVWA, WebGoat) to practice OWASP Top 10 attacks with proof-of-concept exploits.',tags:['DVWA','SQLi','XSS','CSRF','Burp Suite','OWASP'],links:[{l:'GitHub',u:'https://github.com/inoi36'}]},
+];
+document.getElementById('projGrid').innerHTML = projs.map(p=>`
+  <div class="proj-card reveal">
+    <div class="proj-head">
+      <span class="proj-name">${p.name}</span>
+      <span class="pbadge ${p.badge}">${p.status}</span>
+    </div>
+    <p class="proj-desc">${p.desc}</p>
+    <div class="proj-tags">${p.tags.map(t=>`<span class="ptag">${t}</span>`).join('')}</div>
+    <div class="proj-links">${p.links.map(l=>`<a href="${l.u}" target="_blank" class="plink">${l.l} ↗</a>`).join('')}</div>
+  </div>`).join('');
+
+/* ══ PLATFORMS ══ */
+const ghSVG=`<svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`;
+const xSVG=`<svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>`;
+const thmSVG=`<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l6 2.67V11c0 3.88-2.63 7.52-6 8.93-3.37-1.41-6-5.05-6-8.93V7.67L12 5z"/></svg>`;
+
+const plats=[
+  {svg:thmSVG,name:'TryHackMe',handle:'inoi',url:'https://tryhackme.com/p/inoi',desc:'Practicing penetration testing, CTF challenges, and learning paths across offensive & defensive security.',badge:'Active Learner'},
+  {svg:ghSVG,name:'GitHub',handle:'inoi36',url:'https://github.com/inoi36',desc:'Open source projects, security scripts, and research documentation.',badge:'Active'},
+  {svg:xSVG,name:'Twitter / X',handle:'@Dhruv_vyas3',url:'https://x.com/Dhruv_vyas3',desc:'Sharing cybersecurity insights, writeups, and learning notes.',badge:'Active'},
+];
+document.getElementById('platGrid').innerHTML = plats.map(p=>`
+  <a href="${p.url}" target="_blank" class="plat-card reveal">
+    <div class="plat-icon">${p.svg}</div>
+    <div class="plat-info">
+      <div class="plat-name">${p.name}</div>
+      <div class="plat-handle">${p.handle}</div>
+      <div class="plat-desc">${p.desc}</div>
+    </div>
+    <span class="plat-badge">${p.badge}</span>
+  </a>`).join('');
+
+/* ══ TECH STACK ══ */
+const tech=[
+  ['Python','Bash','Kali Linux','Nmap','Burp Suite','Metasploit','Wireshark','Netcat'],
+  ['SQLi','XSS','CSRF','IDOR','SSRF','LFI/RFI','Buffer Overflow','OWASP Top 10'],
+  ['Linux','Docker','Git','VirtualBox','Ghidra','VirusTotal','YARA','John the Ripper'],
+];
+document.getElementById('techWrap').innerHTML = tech.map((row,i)=>{
+  const d=[...row,...row,...row,...row];
+  return `<div class="trow r${i+1}">${d.map(t=>`<span class="tpill">${t}</span>`).join('')}</div>`;
+}).join('');
+
+/* ══ EMAIL ══ */
+const ep=['dhruvtvyas2004','@','gmail','.','com'];
+function revealEmail(){
+  const btn=document.getElementById('emailBtn');
+  btn.classList.add('shown');
+  const email=ep.join('');
+  document.getElementById('emailDec').textContent=email;
+  btn.onclick=()=>{ window.location.href='mailto:'+email; };
+}
+
+/* ══ SCROLL REVEAL ══ */
+const revObs = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'), i*80);
+      revObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.07});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+/* ══ STATS COUNTER ══ */
+const cntObs = new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting){
+    animCount('c1',18); animCount('c2',24); animCount('c3',4); animCount('c4',8);
+    cntObs.disconnect();
+  }
+},{threshold:0.3});
+cntObs.observe(document.getElementById('stats'));
+
+/* ══ GAMING HOURS COUNTER ══ */
+const gameObs = new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting){
+    document.querySelectorAll('.ghours-num').forEach(el=>{
+      const target = parseInt(el.getAttribute('data-target'));
+      let n=0; const step=Math.ceil(target/50);
+      const t=setInterval(()=>{ n=Math.min(n+step,target); el.textContent=n; if(n>=target)clearInterval(t); },30);
+    });
+    gameObs.disconnect();
+  }
+},{threshold:0.2});
+const gameSec = document.getElementById('gaming');
+if(gameSec) gameObs.observe(gameSec);
+</script>
+</body>
+</html>
